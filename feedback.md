@@ -23,6 +23,13 @@
 
 ---
 
+### Answer 4 - Curly braces in JSX
+**Your Answer**: This is a curly brances syntax that allows us write some javascript code inside. For this example we have a variable name and its value will be printed insted the curly braces syntax. We can put some javascript inside of it, bot not all. We can add for example a expression {1 + 1} but we can't create variables inside of it like {let name = 'name'}.
+
+**Feedback**: ✅ Excellent! You now clearly explain that curly braces allow JavaScript **expressions** (like variables and `{1 + 1}`) but not **statements** (like `let` declarations). This shows you understand the key distinction. Great examples!
+
+---
+
 ### Answer 6 - Props vs State
 **Your Answer**: Props are read-only data passed from parent to child component. State is internal managed by the component itself that can change over time.
 
@@ -73,13 +80,6 @@
 ---
 
 ## ⚠️ Needs Improvement
-
-### Answer 4 - Curly braces in JSX
-**Your Answer**: Curly braces notation. We can use Javascript expressions inside of these structure.
-
-**Feedback**: ⚠️ Correct but incomplete. Specify that curly braces allow **JavaScript expressions** to be evaluated and their values inserted into the JSX.
-
----
 
 ### Answer 5 - What are props used for?
 **Your Answer**: Props are used to exchange data between parent and children. We can use props to send data from a component to another.
@@ -160,8 +160,8 @@ You didn't answer these questions:
 
 **Overall**: You have a solid foundation in React fundamentals! Focus on:
 1. Completing the missing answers
-2. Understanding one-way data flow (props)
-3. Clarifying the `children` prop concept
+2. Understanding one-wa1/25 ✅
+- **Need improvement**: 4en` prop concept
 4. Learning proper state placement principles
 
 Keep practicing! 🚀
