@@ -79,14 +79,14 @@
 
 ---
 
-## ⚠️ Needs Improvement
-
 ### Answer 5 - What are props used for?
-**Your Answer**: Props are used to exchange data between parent and children. We can use props to send data from a component to another.
+**Your Answer**: Props are used to send data betwwen the parent and child component. Props are sending down flow to child, not up. Props are read only, it means that the child can't change it by itself.
 
-**Feedback**: ⚠️ Slightly misleading - props are **one-way** (parent → child only), not bidirectional "exchange". Better: "Props pass data from parent to child component."
+**Feedback**: ✅ Excellent improvement! You now clearly explain all three key concepts: (1) one-way data flow from parent to child, (2) unidirectional (down only, not up), and (3) read-only nature. This is a complete and accurate answer.
 
 ---
+
+## ⚠️ Needs Improvement
 
 ### Answer 7 - Explain useState line
 **Your Answer**: This line shows a structure that Reacts use to manage the state. count is a const variable that will be assigned value to it. setCount is a function that is used to set data inside of a variable. useState is a React hook that is used to create state.
@@ -153,8 +153,8 @@ You didn't answer these questions:
 
 ## 📊 Summary
 
-- **Strong answers**: 10/25 ✅
-- **Need improvement**: 5/25 ⚠️
+- **Strong answers**: 11/25 ✅
+- **Need improvement**: 4/25 ⚠️
 - **Incorrect/incomplete**: 2/25 ❌
 - **Missing**: 8/25 📝
 
