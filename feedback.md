@@ -16,6 +16,13 @@
 
 ---
 
+### Answer 3 - Why can we write HTML-like code in JSX?
+**Your Answer**: We can write HTML-like code in a JSX file because React transforms it into pure Javascript code using a funcion named React.createElement(). JSX is a syntax sugar to be easier write code.
+
+**Feedback**: ✅ Excellent! You now correctly explain that JSX is syntax sugar transformed by React into `React.createElement()` calls. This is the key concept.
+
+---
+
 ### Answer 6 - Props vs State
 **Your Answer**: Props are read-only data passed from parent to child component. State is internal managed by the component itself that can change over time.
 
@@ -66,13 +73,6 @@
 ---
 
 ## ⚠️ Needs Improvement
-
-### Answer 3 - Why can we write HTML-like code in JSX?
-**Your Answer**: We can write some HTML-like code inside of a JSX syntax. JSX transforms all structures into JavaScript code behind the scenes.
-
-**Feedback**: ⚠️ Correct concept but circular reasoning. Better answer: "JSX is transformed by React into JavaScript function calls (React.createElement), so the HTML-like syntax is actually JavaScript."
-
----
 
 ### Answer 4 - Curly braces in JSX
 **Your Answer**: Curly braces notation. We can use Javascript expressions inside of these structure.
@@ -153,8 +153,8 @@ You didn't answer these questions:
 
 ## 📊 Summary
 
-- **Strong answers**: 9/25 ✅
-- **Need improvement**: 6/25 ⚠️
+- **Strong answers**: 10/25 ✅
+- **Need improvement**: 5/25 ⚠️
 - **Incorrect/incomplete**: 2/25 ❌
 - **Missing**: 8/25 📝
 

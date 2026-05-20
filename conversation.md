@@ -106,6 +106,85 @@ JSX lets you write HTML-like syntax inside JavaScript:
 This is not real HTML.
 React transforms it into JavaScript behind the scenes.
 
+## Why Can We Write HTML-like Code in JSX?
+
+JSX is actually **syntactic sugar** for JavaScript function calls. When you write JSX, build tools (like Vite or Babel) transform it into regular JavaScript that browsers can understand.
+
+### Example 1: Simple Element
+
+**What you write in JSX:**
+```jsx
+<h1>Hello React</h1>
+```
+
+**What React transforms it into:**
+```javascript
+React.createElement('h1', null, 'Hello React')
+```
+
+The browser never sees the JSX syntax - it only sees the JavaScript function calls!
+
+### Example 2: Element with Props
+
+**What you write in JSX:**
+```jsx
+<h1 className="title" id="main">Hello React</h1>
+```
+
+**What React transforms it into:**
+```javascript
+React.createElement('h1', { className: 'title', id: 'main' }, 'Hello React')
+```
+
+### Example 3: Nested Elements
+
+**What you write in JSX:**
+```jsx
+<div>
+  <h1>Hello React</h1>
+  <p>My first React frontend</p>
+</div>
+```
+
+**What React transforms it into:**
+```javascript
+React.createElement(
+  'div',
+  null,
+  React.createElement('h1', null, 'Hello React'),
+  React.createElement('p', null, 'My first React frontend')
+)
+```
+
+### Example 4: Component Usage
+
+**What you write in JSX:**
+```jsx
+<Header title="CulturaDev" />
+```
+
+**What React transforms it into:**
+```javascript
+React.createElement(Header, { title: 'CulturaDev' })
+```
+
+### The Pattern
+
+Every JSX element follows this pattern:
+```javascript
+React.createElement(
+  type,        // 'div', 'h1', or ComponentName
+  props,       // { className: 'my-class' } or null
+  ...children  // content inside the element
+)
+```
+
+This is why:
+- You can write JSX inside JavaScript files
+- JSX looks like HTML but has full JavaScript power
+- You need to import React (in older versions) - it's used by the transformed code
+- JSX is not valid JavaScript by itself - it needs to be compiled first
+
 Now make your component dynamic.
 
 Update `App.jsx` to this:
