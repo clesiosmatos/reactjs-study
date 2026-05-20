@@ -30,6 +30,13 @@
 
 ---
 
+### Answer 5 - What are props used for?
+**Your Answer**: Props are used to send data betwwen the parent and child component. Props are sending down flow to child, not up. Props are read only, it means that the child can't change it by itself.
+
+**Feedback**: ✅ Excellent improvement! You now clearly explain all three key concepts: (1) one-way data flow from parent to child, (2) unidirectional (down only, not up), and (3) read-only nature. This is a complete and accurate answer.
+
+---
+
 ### Answer 6 - Props vs State
 **Your Answer**: Props are read-only data passed from parent to child component. State is internal managed by the component itself that can change over time.
 
@@ -76,13 +83,6 @@
 **Your Answer**: This is a flow used for a Form. The use types on a input, onChanges fire it identifing every type. setState receive the value and react re-render the Component.
 
 **Feedback**: ✅ Accurate description of the controlled input flow.
-
----
-
-### Answer 5 - What are props used for?
-**Your Answer**: Props are used to send data betwwen the parent and child component. Props are sending down flow to child, not up. Props are read only, it means that the child can't change it by itself.
-
-**Feedback**: ✅ Excellent improvement! You now clearly explain all three key concepts: (1) one-way data flow from parent to child, (2) unidirectional (down only, not up), and (3) read-only nature. This is a complete and accurate answer.
 
 ---
 
