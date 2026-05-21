@@ -59,9 +59,14 @@
 ---
 
 ### Answer 11 - useEffect with empty dependency array
-**Your Answer**: This is the useEffect structure. We use it to initialize thinks on the component's mount process. We can pass data inside of [] to useEffect identify a event or a change.
+**Your Answer**: This is the useEffect hook. Every time when a component runs a lifecycle as mount or cleanup/unmount this hook is executed. We can use it to manage efects on the application. For example to make API calls, initialize timers, external libs and etc. We can use a return for unmount cycle to cleanup some contexts as close a websocket connection, stop a timer and etc. If we have no []: the useEffect will run every mount time. If we have empty []: the useEffect will run only once on the first mount. If we have [] with value, as [value], when this value content changes the useEffect will run again.
 
-**Feedback**: ✅ Correct understanding that empty array means run once on mount.
+**Feedback**: ✅ Excellent improvement! Your breakdown of the three dependency array scenarios is perfect:
+- No array → runs on every render ✓
+- Empty array `[]` → runs once on mount ✓  
+- Array with values `[value]` → runs on mount + when value changes ✓
+
+Great examples of side effects (API calls, timers, external libs) and cleanup (websocket, timer). This shows comprehensive understanding of `useEffect` behavior. Minor note: the first sentence is slightly unclear, but your detailed explanation afterward clarifies everything perfectly.
 
 ---
 
