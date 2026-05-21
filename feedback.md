@@ -44,6 +44,13 @@
 
 ---
 
+### Answer 7 - Explain useState line
+**Your Answer**: This is a state structure definition. useState return an array with two positions, [0] the current value and [1] the updater function. The 0 inside of useState() is a initial value. setCount is a function to update the value.
+
+**Feedback**: ✅ Excellent improvement! You now correctly explain that `useState` returns an array where position [0] is the current value and position [1] is the updater function. You also correctly identify the initial value. The only thing missing is explicitly mentioning "array destructuring" as the technique being used, but your understanding of the concept is solid.
+
+---
+
 ### Answer 8 - Functional state updates
 **Your Answer**: This version is safer because we are defining a functional state update, this function receive a first value from prev variable and will use it internally to increment by one for example. The variable count can lose the current value.
 
@@ -87,13 +94,6 @@
 ---
 
 ## ⚠️ Needs Improvement
-
-### Answer 7 - Explain useState line
-**Your Answer**: This line shows a structure that Reacts use to manage the state. count is a const variable that will be assigned value to it. setCount is a function that is used to set data inside of a variable. useState is a React hook that is used to create state.
-
-**Feedback**: ⚠️ Concept is right but wording is awkward. Better: "This uses array destructuring. `count` holds the current state value, `setCount` is the updater function, and `useState(0)` initializes the state to 0."
-
----
 
 ### Answer 10 - What is useEffect used for?
 **Your Answer**: useEffect is used to initialize for side effects on the lifecycle mount, update and unmound. And we can pass dependencies on the second parameter to useEffect identify a event for example.
@@ -153,15 +153,15 @@ You didn't answer these questions:
 
 ## 📊 Summary
 
-- **Strong answers**: 11/25 ✅
-- **Need improvement**: 4/25 ⚠️
+- **Strong answers**: 12/25 ✅
+- **Need improvement**: 3/25 ⚠️
 - **Incorrect/incomplete**: 2/25 ❌
 - **Missing**: 8/25 📝
 
 **Overall**: You have a solid foundation in React fundamentals! Focus on:
 1. Completing the missing answers
-2. Understanding one-wa1/25 ✅
-- **Need improvement**: 4en` prop concept
+2. Understanding the `children` prop concept
+3. Being more specific about side effects in useEffect
 4. Learning proper state placement principles
 
 Keep practicing! 🚀
