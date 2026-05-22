@@ -105,14 +105,15 @@ Great examples of side effects (API calls, timers, external libs) and cleanup (w
 
 ---
 
-## ⚠️ Needs Improvement
-
----
-
 ### Answer 24 - How does React update UI efficiently?
-**Your Answer**: React creates a virtual DOM and updates only part of it instead update all DOM which would be heavy. This is a very efficient way to update the frontend.
+**Your Answer**: React uses two process to update UI. 1 - Virtual DOM - React create a Javascript object with all elements of the DOM and when a state change React create a new Javascript Object. These are the virtual DOM. 2 - Reconciliation - This process gets these two Javascript Objects and apply a compare algorihtm to identify only the changes. After that React changes the real DOM only the parts or nodes that changed not all. This is a very efficent way to update the DOM. Because update all DOM every time when a small node changes can be very heavy.
 
-**Feedback**: ⚠️ Good but could be more precise. Mention **reconciliation** - React compares the new virtual DOM tree with the previous one to identify minimal changes needed in the real DOM.
+**Feedback**: ✅ Excellent improvement! You now clearly explain both key concepts:
+- **Virtual DOM** - JavaScript objects representing the UI ✓
+- **Reconciliation** - Comparison algorithm to identify changes ✓
+- **Selective updates** - Only changed nodes are updated in real DOM ✓
+
+You correctly explain why this is efficient (avoiding full DOM updates). This shows strong understanding of React's rendering optimization. Minor typos (algorihtm, efficent) but the technical understanding is solid!
 
 ---
 
@@ -160,15 +161,14 @@ You didn't answer these questions:
 
 ## 📊 Summary
 
-- **Strong answers**: 13/25 ✅
-- **Need improvement**: 2/25 ⚠️
+- **Strong answers**: 15/25 ✅
+- **Need improvement**: 0/25 ⚠️
 - **Incorrect/incomplete**: 2/25 ❌
 - **Missing**: 8/25 📝
 
-**Overall**: You have a solid foundation in React fundamentals! Focus on:
-1. Completing the missing answers
-2. Understanding the `children` prop concept
-3. Being more specific about reconciliation in React's rendering
-4. Learning proper state placement principles
+**Overall**: Great progress! You now have a solid understanding of React fundamentals. Focus on:
+1. Completing the 8 missing answers
+2. Understanding the `children` prop concept (Question 18)
+3. Learning proper state placement principles (Question 25)
 
-Keep practicing! 🚀
+You're doing excellent work - keep going! 🚀
