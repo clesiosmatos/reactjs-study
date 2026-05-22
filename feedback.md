@@ -98,12 +98,14 @@ Great examples of side effects (API calls, timers, external libs) and cleanup (w
 
 ---
 
+### Answer 10 - What is useEffect commonly used for?
+**Your Answer**: useEffect is used to react to efects of the application. When we define a useEffect, every time that the component load it is loaded on the mount and unmount process if it definied a return. We can use this Hook to be trigered by external factors like a change value of a variable when we pass [variable] inside of brackets. The useEffect is used mainly to API calls, start and end timers, open and close websckets connections and etc.
+
+**Feedback**: ✅ Great improvement! You now provide concrete examples (API calls, timers, websocket connections) which clearly shows what "effects" means in practice. You also correctly explain the lifecycle behavior (mount/unmount with return for cleanup) and dependency array triggering. This is a solid, complete answer.
+
+---
+
 ## ⚠️ Needs Improvement
-
-### Answer 10 - What is useEffect used for?
-**Your Answer**: useEffect is used to initialize for side effects on the lifecycle mount, update and unmound. And we can pass dependencies on the second parameter to useEffect identify a event for example.
-
-**Feedback**: ⚠️ Too vague. Be more specific about what "side effects" means: data fetching, subscriptions, timers, DOM manipulation, localStorage access, etc.
 
 ---
 
@@ -158,15 +160,15 @@ You didn't answer these questions:
 
 ## 📊 Summary
 
-- **Strong answers**: 12/25 ✅
-- **Need improvement**: 3/25 ⚠️
+- **Strong answers**: 13/25 ✅
+- **Need improvement**: 2/25 ⚠️
 - **Incorrect/incomplete**: 2/25 ❌
 - **Missing**: 8/25 📝
 
 **Overall**: You have a solid foundation in React fundamentals! Focus on:
 1. Completing the missing answers
 2. Understanding the `children` prop concept
-3. Being more specific about side effects in useEffect
+3. Being more specific about reconciliation in React's rendering
 4. Learning proper state placement principles
 
 Keep practicing! 🚀
