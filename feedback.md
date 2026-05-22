@@ -117,20 +117,21 @@ You correctly explain why this is efficient (avoiding full DOM updates). This sh
 
 ---
 
-## 🔴 Incorrect or Incomplete
-
 ### Answer 18 - What is children in React?
-**Your Answer**: children is a structure that dependes of the parent. We can create a children based on a parent. For example: The a Form component is a parent and a Button component is a children. This is a cascade structure.
+**Your Answer**: children is a React feature the is used to to send to a component a flexible JSX structure to complete it. When we define a component and send a children prop we can use this children prop inside of this component. The main idea is that we can work with peaces of structure. `<Card><p>Hello from card</p></Card>` - this p is a children. When we define a function component like: `function Card({children}) { <div>{children}</div> }` - the p with "Hello from card" message will appear here. We can use children feature to send to another component a piece of HTML or JSX structure.
 
-**Feedback**: ❌ Confused explanation. `children` is a **special prop** that contains whatever is passed between component tags:
+**Feedback**: ✅ Excellent improvement! You now correctly understand the `children` prop:
+- **Special React feature** for passing JSX to components ✓
+- **Flexible content** - can pass different structures ✓
+- **Accessed via destructuring** `{ children }` ✓
+- **Rendered inside component** with `{children}` ✓
+- **Great example** showing Card receiving and rendering children ✓
 
-```jsx
-<Card>
-  <p>This is the children prop</p>
-</Card>
-```
+You correctly explain that content between component tags (`<Card>...</Card>`) becomes the `children` prop. Minor typos (peaces → pieces, "the is used to to") but your technical understanding is now solid! This is exactly what the `children` prop is for - component composition.
 
-Inside Card component, you access it via `props.children`.
+---
+
+## 🔴 Incorrect or Incomplete
 
 ---
 
@@ -161,14 +162,13 @@ You didn't answer these questions:
 
 ## 📊 Summary
 
-- **Strong answers**: 15/25 ✅
+- **Strong answers**: 16/25 ✅
 - **Need improvement**: 0/25 ⚠️
-- **Incorrect/incomplete**: 2/25 ❌
+- **Incorrect/incomplete**: 1/25 ❌
 - **Missing**: 8/25 📝
 
-**Overall**: Great progress! You now have a solid understanding of React fundamentals. Focus on:
+**Overall**: Excellent progress! You now have a strong understanding of React fundamentals. Focus on:
 1. Completing the 8 missing answers
-2. Understanding the `children` prop concept (Question 18)
-3. Learning proper state placement principles (Question 25)
+2. Learning proper state placement principles (Question 25)
 
-You're doing excellent work - keep going! 🚀
+You're doing fantastic work - keep going! 🚀
