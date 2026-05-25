@@ -146,6 +146,35 @@ Great examples with authentication and theme! Minor clarification: Context isn't
 
 ---
 
+### Answer 9 - What causes a React component to re-render?
+**Your Answer**: React component is re-rendered always when a state change. A React compoment re-render when these four situations occours:
+1 - state change - always when a state changes the component re-render.
+2 - prop changes - when a parent passes or updates the child props, the child re-render.
+3 - parent re-render - when parent re-render child re-render by default.
+4 - Context/Global changes. Every time that the Global Context changes the parent and child component that uses its value re-render.
+
+**Feedback**: ✅ Perfect! You've nailed all four re-render triggers:
+
+1. ✅ **State changes** - component's own state updates
+2. ✅ **Prop changes** - "when a parent passes or updates the child props" - excellent wording! This clearly shows the parent is passing values TO the child
+3. ✅ **Parent re-renders** - children re-render by default when parent does
+4. ✅ **Context changes** - components using context values re-render when context updates
+
+Your improvement from earlier iterations is remarkable! You now clearly distinguish between:
+- Callbacks triggering parent state change (Trigger #1)
+- Parent passing different prop values to child (Trigger #2)
+- Default parent-to-child re-render propagation (Trigger #3)
+
+This is a comprehensive, accurate answer that shows deep understanding of React's re-rendering behavior! 🎉
+
+---
+
+## ⚠️ Need Improvement
+
+No answers need improvement! 🎉
+
+---
+
 ## 🔴 Incorrect or Incomplete
 
 No incorrect or incomplete answers remaining! 🎉
@@ -155,8 +184,6 @@ No incorrect or incomplete answers remaining! 🎉
 ## 📝 Missing Answers
 
 You didn't answer these questions:
-
-- **Question 9**: What causes a React component to re-render?
 - **Question 15**: What is a controlled input?
 - **Question 17**: What is component composition?
 - **Question 19**: What does "lifting state up" mean?
@@ -169,21 +196,18 @@ You didn't answer these questions:
 
 ## 📊 Summary
 
-- **Strong answers**: 17/25 ✅
+- **Strong answers**: 18/25 ✅
 - **Need improvement**: 0/25 ⚠️
 - **Incorrect/incomplete**: 0/25 ❌
-- **Missing**: 8/25 📝
+- **Missing**: 7/25 📝
 
-**Overall**: Excellent progress! You now have a strong understanding of React fundamentals, including proper state placement principles. Focus on completing the 8 remaining questions:
+**Overall**: Outstanding progress! You now have a strong understanding of React fundamentals, including:
+- ✅ Component re-render triggers (all 4 scenarios)
+- ✅ State placement principles (local, lifted, context)
+- ✅ Props vs state
+- ✅ Hooks (useState, useEffect)
+- ✅ JSX and component basics
 
-**Missing Questions:**
-- Question 9: What causes a React component to re-render?
-- Question 15: What is a controlled input?
-- Question 17: What is component composition?
-- Question 19: What does "lifting state up" mean?
-- Question 20: What problem does `useMemo` solve?
-- Question 21: When should you avoid using `useMemo`?
-- Question 22: What happens when a parent component re-renders?
-- Question 23: Why is React considered declarative?
+**Next step**: Complete the 7 remaining questions listed above to master React fundamentals! 🚀
 
-You're doing fantastic work - keep going! 🚀
+You're doing fantastic work - keep going! 💪

@@ -648,6 +648,660 @@ Test the button again.
 
 ---
 
+## Deep Dive: What Causes a React Component to Re-render?
+
+Understanding **when and why** React re-renders components is fundamental to building performant applications and debugging unexpected behavior.
+
+### The Four Re-render Triggers
+
+A React component re-renders when **any of these four things happen**:
+
+1. **Its own state changes** (`useState`, `useReducer`)
+2. **Its props change** (parent passes new/different props)
+3. **Its parent component re-renders** (children re-render by default)
+4. **Context value changes** (`useContext` value updates)
+
+Let's explore each trigger in detail with examples.
+
+---
+
+### Trigger 1: State Changes
+
+**Most common trigger** - when a component's own state updates.
+
+```jsx
+import { useState } from 'react'
+
+function Counter() {
+  const [count, setCount] = useState(0)
+  
+  console.log('Counter rendered')
+  
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>
+        Increment
+      </button>
+    </div>
+  )
+}
+```
+
+**Flow:**
+```
+1. User clicks button
+   ↓
+2. setCount(count + 1) called
+   ↓
+3. State changes: count goes from 0 → 1
+   ↓
+4. React re-renders Counter component
+   ↓
+5. Console logs: "Counter rendered"
+   ↓
+6. UI updates to show new count
+```
+
+**Key point:** Every state update triggers a re-render of that component.
+
+#### Multiple State Variables
+
+Each state change causes a re-render:
+
+```jsx
+function UserForm() {
+  const [name, setName] = useState('')
+  const [age, setAge] = useState('')
+  const [email, setEmail] = useState('')
+  
+  console.log('UserForm rendered')
+  
+  return (
+    <div>
+      <input 
+        value={name} 
+        onChange={(e) => setName(e.target.value)}  // Re-renders on every keystroke
+      />
+      <input 
+        value={age} 
+        onChange={(e) => setAge(e.target.value)}   // Re-renders on every keystroke
+      />
+      <input 
+        value={email} 
+        onChange={(e) => setEmail(e.target.value)} // Re-renders on every keystroke
+      />
+    </div>
+  )
+}
+```
+
+**What happens:** Every keystroke in any input triggers a re-render because state is changing.
+
+---
+
+### Trigger 2: Props Changes
+
+When a **parent passes different props**, the child re-renders.
+
+```jsx
+function Parent() {
+  const [count, setCount] = useState(0)
+  
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>
+        Increment
+      </button>
+      <Child count={count} />  {/* Passing count as prop */}
+    </div>
+  )
+}
+
+function Child({ count }) {
+  console.log('Child re-rendered because props changed')
+  
+  return <p>Count from parent: {count}</p>
+}
+```
+
+**Flow:**
+```
+1. Parent's state changes (count: 0 → 1)
+   ↓
+2. Parent re-renders
+   ↓
+3. Parent passes NEW prop value to Child (count={1})
+   ↓
+4. React detects prop changed (0 → 1)
+   ↓
+5. Child re-renders
+   ↓
+6. Console logs: "Child re-rendered because props changed"
+```
+
+#### Important: React Compares Props
+
+React uses **shallow comparison** to check if props changed:
+
+```jsx
+function Parent() {
+  const [count, setCount] = useState(0)
+  const userName = 'Clesio'  // This never changes
+  
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>Click</button>
+      <Child name={userName} count={count} />
+    </div>
+  )
+}
+
+function Child({ name, count }) {
+  console.log('Child rendered')
+  console.log('name:', name)     // Always "Clesio"
+  console.log('count:', count)   // Changes on each click
+  
+  return (
+    <div>
+      <p>Name: {name}</p>
+      <p>Count: {count}</p>
+    </div>
+  )
+}
+```
+
+**What happens:**
+- Even though `name` doesn't change, `count` does
+- Since at least one prop changed, Child re-renders
+- React doesn't re-render just the "changed parts" of props - it re-renders the whole component
+
+---
+
+### Trigger 3: Parent Re-renders (The Surprising One!)
+
+**Critical concept:** By default, when a parent re-renders, **all its children re-render too**, even if their props didn't change!
+
+```jsx
+function Parent() {
+  const [count, setCount] = useState(0)
+  
+  console.log('Parent rendered')
+  
+  return (
+    <div>
+      <h1>Parent Component</h1>
+      <button onClick={() => setCount(count + 1)}>
+        Increment Parent Count: {count}
+      </button>
+      
+      {/* Child receives NO props */}
+      <Child />
+    </div>
+  )
+}
+
+function Child() {
+  console.log('Child rendered (even though it has no props!)')
+  
+  return (
+    <div>
+      <p>I'm a child component</p>
+      <p>I have no props or state</p>
+    </div>
+  )
+}
+```
+
+**Console output when you click the button:**
+```
+Parent rendered
+Child rendered (even though it has no props!)
+Parent rendered
+Child rendered (even though it has no props!)
+Parent rendered
+Child rendered (even though it has no props!)
+...
+```
+
+**Why does Child re-render?**
+- Child has no props
+- Child has no state
+- But Parent re-rendered
+- React's default behavior: re-render all children when parent re-renders
+
+#### Real-World Example
+
+```jsx
+function Dashboard() {
+  const [theme, setTheme] = useState('light')
+  
+  return (
+    <div className={theme}>
+      <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+        Toggle Theme
+      </button>
+      
+      <Header />        {/* Re-renders when theme changes */}
+      <Sidebar />       {/* Re-renders when theme changes */}
+      <MainContent />   {/* Re-renders when theme changes */}
+      <Footer />        {/* Re-renders when theme changes */}
+    </div>
+  )
+}
+
+function Header() {
+  console.log('Header re-rendered')
+  return <header>My App</header>
+}
+
+function Sidebar() {
+  console.log('Sidebar re-rendered')
+  return <aside>Sidebar</aside>
+}
+
+function MainContent() {
+  console.log('MainContent re-rendered')
+  return <main>Content here</main>
+}
+
+function Footer() {
+  console.log('Footer re-rendered')
+  return <footer>Footer</footer>
+}
+```
+
+**Console output when you toggle theme:**
+```
+Header re-rendered
+Sidebar re-rendered
+MainContent re-rendered
+Footer re-rendered
+```
+
+**All four components re-render** even though they don't use the `theme` state!
+
+#### Why Does React Do This?
+
+React assumes that if a parent re-renders, its children **might** need to re-render too. This is the **safe default** because:
+- Components might depend on parent context even if not via props
+- It's easier to reason about
+- You can optimize later if needed
+
+---
+
+### Trigger 4: Context Value Changes
+
+When using `useContext`, the component re-renders if the context value changes.
+
+```jsx
+import { createContext, useContext, useState } from 'react'
+
+// 1. Create context
+const UserContext = createContext()
+
+function App() {
+  const [user, setUser] = useState({ name: 'Clesio', age: 28 })
+  
+  return (
+    <UserContext.Provider value={user}>
+      <div>
+        <h1>App Component</h1>
+        <button onClick={() => setUser({ name: 'Clesio', age: 29 })}>
+          Increment Age
+        </button>
+        
+        <ComponentA />
+        <ComponentB />
+        <ComponentC />
+      </div>
+    </UserContext.Provider>
+  )
+}
+
+function ComponentA() {
+  console.log('ComponentA rendered (not using context)')
+  return <div>Component A</div>
+}
+
+function ComponentB() {
+  const user = useContext(UserContext)  // ← Uses context
+  console.log('ComponentB re-rendered because context changed')
+  
+  return <div>User: {user.name}, Age: {user.age}</div>
+}
+
+function ComponentC() {
+  console.log('ComponentC rendered (not using context)')
+  return <div>Component C</div>
+}
+```
+
+**Console output when you click "Increment Age":**
+```
+ComponentA rendered (not using context)
+ComponentB re-rendered because context changed
+ComponentC rendered (not using context)
+```
+
+**What happened:**
+- `user` state changes in App
+- App re-renders (Trigger 1: state change)
+- ComponentA, ComponentB, ComponentC all re-render (Trigger 3: parent re-renders)
+- ComponentB **also** re-renders because it uses context (Trigger 4: context change)
+
+#### Context Re-render Example
+
+```jsx
+const ThemeContext = createContext()
+
+function App() {
+  const [theme, setTheme] = useState('light')
+  const [count, setCount] = useState(0)
+  
+  return (
+    <ThemeContext.Provider value={theme}>
+      <div>
+        <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+          Toggle Theme
+        </button>
+        <button onClick={() => setCount(count + 1)}>
+          Increment: {count}
+        </button>
+        
+        <DeepChild />
+      </div>
+    </ThemeContext.Provider>
+  )
+}
+
+function DeepChild() {
+  const theme = useContext(ThemeContext)
+  console.log('DeepChild re-rendered')
+  
+  return (
+    <div style={{ background: theme === 'light' ? '#fff' : '#333' }}>
+      Current theme: {theme}
+    </div>
+  )
+}
+```
+
+**Behavior:**
+- Click "Toggle Theme" → DeepChild re-renders (context changed)
+- Click "Increment" → DeepChild re-renders (parent re-rendered, even though context didn't change)
+
+---
+
+### Understanding Parent-Child Re-render Chains
+
+Re-renders **cascade down** the component tree:
+
+```jsx
+function GrandParent() {
+  const [count, setCount] = useState(0)
+  console.log('GrandParent rendered')
+  
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>Click</button>
+      <Parent />
+    </div>
+  )
+}
+
+function Parent() {
+  console.log('Parent rendered')
+  return (
+    <div>
+      <Child />
+    </div>
+  )
+}
+
+function Child() {
+  console.log('Child rendered')
+  return <div>I'm the child</div>
+}
+```
+
+**Console output when you click the button:**
+```
+GrandParent rendered
+Parent rendered
+Child rendered
+```
+
+**The cascade:**
+```
+GrandParent state changes
+   ↓
+GrandParent re-renders
+   ↓
+Parent re-renders (parent re-rendered)
+   ↓
+Child re-renders (parent re-rendered)
+```
+
+Every component in the tree re-renders!
+
+---
+
+### What Does NOT Cause Re-renders
+
+It's important to know what **doesn't** trigger re-renders:
+
+#### 1. Changing Regular Variables
+
+```jsx
+function App() {
+  let count = 0  // Regular variable, NOT state
+  
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => {
+        count = count + 1        // ❌ Doesn't re-render!
+        console.log(count)       // Logs new value, but UI doesn't update
+      }}>
+        Increment
+      </button>
+    </div>
+  )
+}
+```
+
+**Why no re-render:** Regular variables are not tracked by React. Use `useState` instead.
+
+#### 2. Mutating State Directly
+
+```jsx
+function App() {
+  const [user, setUser] = useState({ name: 'Clesio', age: 28 })
+  
+  return (
+    <div>
+      <p>Age: {user.age}</p>
+      <button onClick={() => {
+        user.age = 29           // ❌ Mutating state directly - no re-render!
+        console.log(user.age)   // Logs 29, but UI doesn't update
+      }}>
+        Increment Age (Wrong)
+      </button>
+      
+      <button onClick={() => {
+        setUser({ ...user, age: user.age + 1 })  // ✅ Correct - creates new object
+      }}>
+        Increment Age (Correct)
+      </button>
+    </div>
+  )
+}
+```
+
+**Why no re-render:** React uses **reference equality** to detect state changes. Mutating the object directly doesn't create a new reference.
+
+#### 3. Setting State to the Same Value
+
+```jsx
+function App() {
+  const [count, setCount] = useState(0)
+  
+  console.log('App rendered')
+  
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(0)}>
+        Set to 0
+      </button>
+    </div>
+  )
+}
+```
+
+**First click:** Re-renders (0 → 0, but React doesn't know it's the same until it checks)
+**Second click:** No re-render (React detects the value hasn't changed)
+
+React optimizes this with **Object.is()** comparison.
+
+---
+
+### Performance Implications
+
+Understanding re-renders is crucial for performance:
+
+```jsx
+function SlowComponent() {
+  console.log('SlowComponent rendering...')
+  
+  // Simulate expensive computation
+  const expensiveResult = Array.from({ length: 100000 }, (_, i) => i * 2)
+  
+  return <div>Slow component result: {expensiveResult.length}</div>
+}
+
+function App() {
+  const [theme, setTheme] = useState('light')
+  
+  return (
+    <div>
+      <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+        Toggle Theme
+      </button>
+      
+      <SlowComponent />  {/* Re-renders on every theme change! */}
+    </div>
+  )
+}
+```
+
+**Problem:** `SlowComponent` re-renders even though it doesn't use `theme`. The expensive computation runs on every theme toggle.
+
+**Solution options:**
+1. Move SlowComponent outside (separate parent)
+2. Use `React.memo()` to prevent unnecessary re-renders
+3. Use `useMemo()` for expensive computations
+
+---
+
+### Optimization: React.memo
+
+`React.memo` prevents re-renders when props haven't changed:
+
+```jsx
+import { memo } from 'react'
+
+// Without memo - re-renders when parent re-renders
+function ChildWithoutMemo() {
+  console.log('ChildWithoutMemo rendered')
+  return <div>Child without memo</div>
+}
+
+// With memo - only re-renders if props change
+const ChildWithMemo = memo(function ChildWithMemo() {
+  console.log('ChildWithMemo rendered')
+  return <div>Child with memo</div>
+})
+
+function Parent() {
+  const [count, setCount] = useState(0)
+  
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>
+        Parent Count: {count}
+      </button>
+      
+      <ChildWithoutMemo />
+      <ChildWithMemo />
+    </div>
+  )
+}
+```
+
+**Console output when you click the button:**
+```
+ChildWithoutMemo rendered  ← Re-renders every time
+(ChildWithMemo doesn't log - it's skipped!)
+```
+
+`React.memo` tells React: "Only re-render this component if its props actually changed."
+
+---
+
+### Summary: The Four Re-render Triggers
+
+| Trigger | Example | Can You Prevent It? |
+|---------|---------|---------------------|
+| **State changes** | `setState(newValue)` | No (this is expected behavior) |
+| **Props change** | Parent passes new prop value | No (child needs the new value) |
+| **Parent re-renders** | Parent's state/props changed | Yes (use `React.memo`) |
+| **Context changes** | Context value updates | No (component needs new context value) |
+
+### Mental Model
+
+Think of re-renders like a **domino effect**:
+
+```
+State Change
+   ↓
+Component Re-renders
+   ↓
+All Children Re-render
+   ↓
+Their Children Re-render
+   ↓
+... and so on down the tree
+```
+
+**Key insight:** Re-renders cascade down, never up. Children can't cause parents to re-render (but they can call parent functions that update parent state).
+
+### Debugging Re-renders
+
+Use console.log to track re-renders:
+
+```jsx
+function Component() {
+  console.log('Component rendered')
+  // Rest of component
+}
+```
+
+Or use React DevTools Profiler to visualize re-renders.
+
+### When to Worry About Re-renders
+
+**Don't optimize prematurely!** Re-renders are usually fast. Only optimize when:
+- You have performance issues in production
+- Component has expensive computations
+- Lists with hundreds/thousands of items
+- Animations feel janky
+
+Most React apps run perfectly fine with the default re-render behavior.
+
+---
+
 ## Deep Dive: How React Updates the UI Efficiently
 
 ### The Problem React Solves
