@@ -131,17 +131,24 @@ You correctly explain that content between component tags (`<Card>...</Card>`) b
 
 ---
 
-## 🔴 Incorrect or Incomplete
+### Answer 25 - Where should state live?
+**Your Answer**: State should live on three situations:
+1 - Local place - If we don't need to share the state with other components, mantain it on the local component.
+2 - Commom component usage - if we need to share state with at least 1 or 3 components, add the state on the lowest commom ancestor. In other words, the parent component.
+3 - Global place - If you need to share state with 3+ components, use createContext hook. This hook will allow share the state with a lot of other Components. This is used manily with authentication flow, or theme color.
+
+**Feedback**: ✅ Excellent improvement! You now correctly identify all three state placement scenarios:
+- **Local state** - keep it in the component if only that component needs it ✓
+- **Lifted state** - lift to lowest common ancestor (parent) when siblings need to share ✓
+- **Context/Global** - use Context for widely-shared state (auth, theme) ✓
+
+Great examples with authentication and theme! Minor clarification: Context isn't just about the *number* of components (3+), but rather about *avoiding prop drilling* when components are far apart in the tree. For example, if you need to pass props through 3+ levels of components that don't use them, that's when Context shines. But the core understanding is solid! 🎯
 
 ---
 
-### Answer 25 - Where should state live?
-**Your Answer**: The state should live on parent and child places. Not on a global scope for example.
+## 🔴 Incorrect or Incomplete
 
-**Feedback**: ❌ Incomplete and unclear. State should live in the **lowest common ancestor** that needs access to it. Rules:
-- If only one component needs it → keep it local
-- If siblings need to share → lift to parent
-- If many unrelated components need it → consider context or state management
+No incorrect or incomplete answers remaining! 🎉
 
 ---
 
@@ -162,13 +169,21 @@ You didn't answer these questions:
 
 ## 📊 Summary
 
-- **Strong answers**: 16/25 ✅
+- **Strong answers**: 17/25 ✅
 - **Need improvement**: 0/25 ⚠️
-- **Incorrect/incomplete**: 1/25 ❌
+- **Incorrect/incomplete**: 0/25 ❌
 - **Missing**: 8/25 📝
 
-**Overall**: Excellent progress! You now have a strong understanding of React fundamentals. Focus on:
-1. Completing the 8 missing answers
-2. Learning proper state placement principles (Question 25)
+**Overall**: Excellent progress! You now have a strong understanding of React fundamentals, including proper state placement principles. Focus on completing the 8 remaining questions:
+
+**Missing Questions:**
+- Question 9: What causes a React component to re-render?
+- Question 15: What is a controlled input?
+- Question 17: What is component composition?
+- Question 19: What does "lifting state up" mean?
+- Question 20: What problem does `useMemo` solve?
+- Question 21: When should you avoid using `useMemo`?
+- Question 22: What happens when a parent component re-renders?
+- Question 23: Why is React considered declarative?
 
 You're doing fantastic work - keep going! 🚀

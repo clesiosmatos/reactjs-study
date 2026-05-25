@@ -3287,3 +3287,659 @@ JSX Mode (HTML-like)         JavaScript Mode
 
 This is what makes React components dynamic and powerful! 🚀
 
+---
+
+# Step 20 — Where Should State Live?
+
+One of the most important architectural decisions in React is:
+
+> Where should I put this state?
+
+Getting this right makes your application easier to build, debug, and maintain.
+
+Getting it wrong creates confusing data flows and unnecessary complexity.
+
+## The Golden Rule
+
+**State should live in the lowest common ancestor that needs access to it.**
+
+This means:
+1. If only **one component** needs the state → keep it local in that component
+2. If **sibling components** need to share state → lift it to their common parent
+3. If **many unrelated components** need the state → consider Context or state management libraries
+
+## Scenario 1: Local State (One Component)
+
+**When to use:** The state is only needed by one component.
+
+### Example: Counter
+
+```jsx
+function Counter() {
+  // ✅ State lives here because only Counter needs it
+  const [count, setCount] = useState(0)
+  
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>
+        Increment
+      </button>
+    </div>
+  )
+}
+```
+
+**Why this is correct:**
+- No other component needs `count`
+- Keeping it local makes Counter self-contained and reusable
+- Easy to understand and test
+
+### Example: Form Input State
+
+```jsx
+function SearchBar() {
+  // ✅ Only SearchBar uses this search term
+  const [searchTerm, setSearchTerm] = useState('')
+  
+  const handleSearch = () => {
+    // Perform search with searchTerm
+    console.log('Searching for:', searchTerm)
+  }
+  
+  return (
+    <div>
+      <input 
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <button onClick={handleSearch}>Search</button>
+    </div>
+  )
+}
+```
+
+### Example: Toggle State
+
+```jsx
+function Accordion() {
+  // ✅ Only this accordion needs to know if it's open
+  const [isOpen, setIsOpen] = useState(false)
+  
+  return (
+    <div>
+      <button onClick={() => setIsOpen(!isOpen)}>
+        {isOpen ? 'Collapse' : 'Expand'}
+      </button>
+      {isOpen && (
+        <div className="accordion-content">
+          <p>Hidden content here...</p>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+**Pattern:** If you can delete the component and all its state goes with it without affecting anything else, the state is correctly placed.
+
+## Scenario 2: Lifted State (Siblings Share Data)
+
+**When to use:** Multiple sibling components need access to the same state.
+
+### Problem: Siblings Can't Share State Directly
+
+```jsx
+// ❌ WRONG - This won't work
+function UserInput() {
+  const [name, setName] = useState('')
+  
+  return (
+    <input 
+      value={name} 
+      onChange={(e) => setName(e.target.value)} 
+    />
+  )
+}
+
+function UserDisplay() {
+  // ❌ ERROR: UserDisplay can't access UserInput's state!
+  return <p>User name: {name}</p>  // name is not defined
+}
+
+function App() {
+  return (
+    <div>
+      <UserInput />
+      <UserDisplay />
+    </div>
+  )
+}
+```
+
+### Solution: Lift State to Common Parent
+
+```jsx
+// ✅ CORRECT - State lives in the parent
+function App() {
+  // State is "lifted up" to the lowest common ancestor
+  const [name, setName] = useState('')
+  
+  return (
+    <div>
+      <UserInput name={name} setName={setName} />
+      <UserDisplay name={name} />
+    </div>
+  )
+}
+
+function UserInput({ name, setName }) {
+  return (
+    <input 
+      value={name} 
+      onChange={(e) => setName(e.target.value)} 
+    />
+  )
+}
+
+function UserDisplay({ name }) {
+  return <p>User name: {name}</p>
+}
+```
+
+**Data flow:**
+```
+      App (owns state)
+       |
+   [name, setName]
+       |
+   ┌───┴───┐
+   ↓       ↓
+UserInput  UserDisplay
+(can modify) (can read)
+```
+
+### Real-World Example: Shopping Cart
+
+```jsx
+function App() {
+  // ✅ Cart state lives here because multiple components need it
+  const [cartItems, setCartItems] = useState([])
+  
+  const addToCart = (product) => {
+    setCartItems([...cartItems, product])
+  }
+  
+  const removeFromCart = (productId) => {
+    setCartItems(cartItems.filter(item => item.id !== productId))
+  }
+  
+  return (
+    <div>
+      <Header cartCount={cartItems.length} />
+      <ProductList onAddToCart={addToCart} />
+      <Cart items={cartItems} onRemove={removeFromCart} />
+    </div>
+  )
+}
+
+function Header({ cartCount }) {
+  return (
+    <header>
+      <h1>My Store</h1>
+      <p>Cart: {cartCount} items</p>
+    </header>
+  )
+}
+
+function ProductList({ onAddToCart }) {
+  const products = [
+    { id: 1, name: 'Laptop', price: 999 },
+    { id: 2, name: 'Mouse', price: 29 },
+  ]
+  
+  return (
+    <div>
+      {products.map(product => (
+        <div key={product.id}>
+          <p>{product.name} - ${product.price}</p>
+          <button onClick={() => onAddToCart(product)}>
+            Add to Cart
+          </button>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function Cart({ items, onRemove }) {
+  return (
+    <div>
+      <h2>Your Cart</h2>
+      {items.map(item => (
+        <div key={item.id}>
+          <p>{item.name}</p>
+          <button onClick={() => onRemove(item.id)}>Remove</button>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+**Why this works:**
+- `Header` needs to show cart count
+- `ProductList` needs to add items to cart
+- `Cart` needs to display and remove items
+- `App` is the lowest common ancestor of all three
+- State lives in `App` and flows down via props
+
+### Real-World Example: Filtering and Display
+
+```jsx
+function Dashboard() {
+  // ✅ Both filter and table need this state
+  const [filterText, setFilterText] = useState('')
+  const [users, setUsers] = useState([
+    { id: 1, name: 'Alice', role: 'Admin' },
+    { id: 2, name: 'Bob', role: 'User' },
+    { id: 3, name: 'Charlie', role: 'Admin' },
+  ])
+  
+  const filteredUsers = users.filter(user => 
+    user.name.toLowerCase().includes(filterText.toLowerCase())
+  )
+  
+  return (
+    <div>
+      <SearchFilter value={filterText} onChange={setFilterText} />
+      <UserTable users={filteredUsers} />
+      <UserStats totalUsers={users.length} filteredCount={filteredUsers.length} />
+    </div>
+  )
+}
+
+function SearchFilter({ value, onChange }) {
+  return (
+    <input 
+      placeholder="Filter users..." 
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  )
+}
+
+function UserTable({ users }) {
+  return (
+    <table>
+      <tbody>
+        {users.map(user => (
+          <tr key={user.id}>
+            <td>{user.name}</td>
+            <td>{user.role}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+function UserStats({ totalUsers, filteredCount }) {
+  return (
+    <p>Showing {filteredCount} of {totalUsers} users</p>
+  )
+}
+```
+
+## Scenario 3: Deeply Nested or Global State
+
+**When to use:** Many components at different levels need the same state.
+
+### Problem: Prop Drilling
+
+```jsx
+// ❌ PROP DRILLING - Passing props through many levels
+function App() {
+  const [user, setUser] = useState({ name: 'Clesio' })
+  
+  return <Layout user={user} setUser={setUser} />
+}
+
+function Layout({ user, setUser }) {
+  // Layout doesn't use user, just passes it down
+  return <Sidebar user={user} setUser={setUser} />
+}
+
+function Sidebar({ user, setUser }) {
+  // Sidebar doesn't use user, just passes it down
+  return <Menu user={user} setUser={setUser} />
+}
+
+function Menu({ user, setUser }) {
+  // Finally used here!
+  return <p>Welcome, {user.name}</p>
+}
+```
+
+**Problem:** `Layout` and `Sidebar` don't need `user`, but they have to pass it through. This is called **prop drilling** and it's messy.
+
+### Solution: React Context (for global-ish state)
+
+```jsx
+import { createContext, useContext, useState } from 'react'
+
+// 1. Create Context
+const UserContext = createContext()
+
+// 2. Provide Context at the top
+function App() {
+  const [user, setUser] = useState({ name: 'Clesio' })
+  
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      <Layout />
+    </UserContext.Provider>
+  )
+}
+
+// 3. Components that don't need user data don't touch it
+function Layout() {
+  return <Sidebar />  // ✅ No props passed
+}
+
+function Sidebar() {
+  return <Menu />  // ✅ No props passed
+}
+
+// 4. Component that needs user data uses the hook
+function Menu() {
+  const { user } = useContext(UserContext)  // ✅ Direct access
+  return <p>Welcome, {user.name}</p>
+}
+
+function AnotherComponent() {
+  const { user, setUser } = useContext(UserContext)
+  
+  return (
+    <div>
+      <p>User: {user.name}</p>
+      <button onClick={() => setUser({ name: 'New Name' })}>
+        Change Name
+      </button>
+    </div>
+  )
+}
+```
+
+**When to use Context:**
+- User authentication state (logged in user)
+- Theme settings (dark mode / light mode)
+- Language/locale preferences
+- Shopping cart (if used across many pages)
+- Current selected item (in complex UIs)
+
+### Real-World Example: Theme Context
+
+```jsx
+const ThemeContext = createContext()
+
+function App() {
+  const [theme, setTheme] = useState('light')
+  
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light')
+  }
+  
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <div className={`app ${theme}`}>
+        <Header />
+        <MainContent />
+        <Footer />
+      </div>
+    </ThemeContext.Provider>
+  )
+}
+
+function Header() {
+  return (
+    <header>
+      <Logo />
+      <Navigation />
+      <ThemeToggle />  {/* Deep inside, but can access theme */}
+    </header>
+  )
+}
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useContext(ThemeContext)
+  
+  return (
+    <button onClick={toggleTheme}>
+      {theme === 'light' ? '🌙' : '☀️'}
+    </button>
+  )
+}
+
+function MainContent() {
+  const { theme } = useContext(ThemeContext)
+  
+  return (
+    <main style={{ 
+      backgroundColor: theme === 'light' ? '#fff' : '#333',
+      color: theme === 'light' ? '#000' : '#fff'
+    }}>
+      <p>Content here...</p>
+    </main>
+  )
+}
+```
+
+## Decision Tree: Where Should My State Live?
+
+Use this to decide where to place state:
+
+```
+START: I need to add some state
+  |
+  ↓
+Q1: Is it only used by ONE component?
+  |
+  Yes → ✅ Keep it LOCAL in that component
+  |
+  No → Continue ↓
+  |
+  ↓
+Q2: Is it used by SIBLING components?
+  |
+  Yes → ✅ LIFT IT UP to the closest common parent
+  |
+  No → Continue ↓
+  |
+  ↓
+Q3: Is it used by components far apart in the tree?
+     (Many levels of nesting, different branches)
+  |
+  Yes → ✅ Use CONTEXT or state management
+  |
+  No → Re-evaluate your component structure
+```
+
+## Common Mistakes
+
+### ❌ Mistake 1: Putting Everything in the Top Component
+
+```jsx
+// ❌ BAD - All state at the top even if not needed
+function App() {
+  const [modalOpen, setModalOpen] = useState(false)
+  const [accordionOpen, setAccordionOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [hoverState, setHoverState] = useState(false)
+  
+  // ... passing everything down unnecessarily
+}
+```
+
+**Problem:** Components lose encapsulation. The App component knows too much. Hard to reuse components.
+
+### ❌ Mistake 2: Duplicating State
+
+```jsx
+// ❌ BAD - Same data in multiple places
+function App() {
+  const [userName, setUserName] = useState('Clesio')
+  
+  return (
+    <div>
+      <Profile />
+      <Settings />
+    </div>
+  )
+}
+
+function Profile() {
+  const [userName, setUserName] = useState('Clesio')  // ❌ Duplicate!
+  return <p>{userName}</p>
+}
+
+function Settings() {
+  const [userName, setUserName] = useState('Clesio')  // ❌ Duplicate!
+  return <input value={userName} onChange={...} />
+}
+```
+
+**Problem:** The three `userName` states are independent. Changing one doesn't update the others. Single source of truth is violated.
+
+**✅ Fix:** Lift to App and pass down as props.
+
+### ❌ Mistake 3: Using Context for Everything
+
+```jsx
+// ❌ OVERKILL - Using context for simple local state
+const CountContext = createContext()
+
+function App() {
+  const [count, setCount] = useState(0)
+  
+  return (
+    <CountContext.Provider value={{ count, setCount }}>
+      <Counter />  {/* Only component that uses count */}
+    </CountContext.Provider>
+  )
+}
+
+function Counter() {
+  const { count, setCount } = useContext(CountContext)
+  return <button onClick={() => setCount(count + 1)}>{count}</button>
+}
+```
+
+**Problem:** Context adds complexity. For simple parent-child relationships, props are simpler and more explicit.
+
+**✅ Fix:** Just pass props.
+
+## Visual Summary
+
+### Case 1: Local State
+```
+ComponentA
+├─ state ✅ (only used here)
+└─ render UI
+```
+
+### Case 2: Lifted State
+```
+        Parent
+        ├─ state ✅ (shared by children)
+        |
+   ┌────┴────┐
+   ↓         ↓
+ Child1   Child2
+(uses it) (uses it)
+```
+
+### Case 3: Context
+```
+       App
+       ├─ Context Provider ✅
+       |
+   ┌───┴───────────┐
+   ↓               ↓
+Layout          Sidebar
+   ↓               ↓
+Header          Menu
+   ↓               ↓
+Logo     ThemeToggle (uses context)
+   ↓
+Navigation (uses context)
+```
+
+## Key Principles
+
+**1. Start local, lift when needed**
+- Begin with state in the component that uses it
+- Only lift it up when other components need access
+- Don't prematurely lift state "just in case"
+
+**2. Single source of truth**
+- Each piece of state should live in exactly ONE place
+- Never duplicate state across components
+- Derive values instead of storing them separately
+
+**3. Data flows down**
+- State lives in parent
+- Children receive data via props
+- Children call parent functions to update state
+
+**4. Minimize prop drilling**
+- If passing props through 3+ levels that don't use them → consider Context
+- But don't use Context for everything
+- Component composition can sometimes avoid prop drilling
+
+## Practice Exercise
+
+Try placing state correctly in this scenario:
+
+**Requirements:**
+- Show a list of products
+- Each product has an "Add to Cart" button
+- Display total cart count in header
+- Show cart details in sidebar
+- Filter products by search term
+
+**Where should each state live?**
+
+1. **Product list data** → ?
+2. **Cart items** → ?
+3. **Search filter text** → ?
+4. **Individual product "hover" state** → ?
+
+**Answers:**
+1. Product list → `App` or `ProductList` (depends on if other components need it)
+2. Cart items → `App` (both Header and Sidebar need it)
+3. Search filter → `App` (both SearchBar and ProductList need it)
+4. Hover state → Individual `Product` component (only that product needs it)
+
+## Summary
+
+**Where should state live?**
+
+✅ **Local component** if:
+- Only that one component needs it
+- It's UI-specific (hover, focus, open/close)
+- It's temporary or transient
+
+✅ **Common parent** if:
+- Sibling components need to share it
+- Parent needs to coordinate children
+
+✅ **Context/Global** if:
+- Many unrelated components need it
+- Passing via props requires 3+ levels
+- It's truly application-wide (auth, theme, locale)
+
+**Golden rule:** State should live in the **lowest common ancestor** that needs access to it.
+
+Start thinking about your component tree as a hierarchy, and let state "flow down" from the right level. This creates predictable, maintainable React applications.
+
