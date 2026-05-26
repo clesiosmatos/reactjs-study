@@ -112,6 +112,19 @@ You've captured all the essential concepts: state-controlled values, required pr
 
 ---
 
+### Answer 17 - What is component composition?
+**Your Answer**: Component composition is the the way to create building blocks components like LEGO. One component can be used by other in a tree structure with parent and child.
+
+**Feedback**: ✅ Great answer! You clearly understand the core concept of component composition:
+- **LEGO analogy** - perfect analogy showing components as reusable building blocks ✓
+- **Building blocks** - you correctly identify that components are modular pieces ✓
+- **Component reusability** - "One component can be used by other" shows you understand reuse ✓
+- **Tree structure** - you correctly mention parent-child hierarchy ✓
+
+You've captured the essence: composition is about combining smaller, focused components to build complex UIs. The LEGO metaphor is spot-on - just like LEGO blocks, React components are small pieces that combine in different ways to create larger structures. Minor typo ("the the") but your understanding is solid! To make it even stronger, you could mention that composition helps with reusability and maintainability, but you've got the fundamental concept down! 🎯
+
+---
+
 ### Answer 10 - What is useEffect commonly used for?
 **Your Answer**: useEffect is used to react to efects of the application. When we define a useEffect, every time that the component load it is loaded on the mount and unmount process if it definied a return. We can use this Hook to be trigered by external factors like a change value of a variable when we pass [variable] inside of brackets. The useEffect is used mainly to API calls, start and end timers, open and close websckets connections and etc.
 
@@ -198,7 +211,6 @@ No incorrect or incomplete answers remaining! 🎉
 ## 📝 Missing Answers
 
 You didn't answer these questions:
-- **Question 17**: What is component composition?
 - **Question 19**: What does "lifting state up" mean?
 - **Question 20**: What problem does `useMemo` solve?
 - **Question 21**: When should you avoid using `useMemo`?
@@ -209,10 +221,10 @@ You didn't answer these questions:
 
 ## 📊 Summary
 
-- **Strong answers**: 19/25 ✅
+- **Strong answers**: 20/25 ✅
 - **Need improvement**: 0/25 ⚠️
 - **Incorrect/incomplete**: 0/25 ❌
-- **Missing**: 6/25 📝
+- **Missing**: 5/25 📝
 
 **Overall**: Outstanding progress! You now have a strong understanding of React fundamentals, including:
 - ✅ Component re-render triggers (all 4 scenarios)
