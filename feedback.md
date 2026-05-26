@@ -91,6 +91,20 @@ Great examples of side effects (API calls, timers, external libs) and cleanup (w
 
 ---
 
+### Answer 15 - What is a controlled input?
+**Your Answer**: A controlled input in React is an input that Reacts control using state. With React we have total input control. React identifies each type and can apply some logic on this with a real time behavior. The inputs needs to have value prop and onChange, one to set the current value and another to react to the user keystroke. Uncontrolled inputs are like HTML pure forms. React doens't have control like controlled.
+
+**Feedback**: ✅ Excellent answer! You clearly understand controlled inputs:
+- **Definition** - "input that React controls using state" ✓
+- **Total control** - React can apply logic in real-time ✓
+- **Required props** - `value` and `onChange` are both needed ✓
+- **Purpose of props** - "one to set the current value and another to react to the user keystroke" - perfect explanation ✓
+- **Comparison** - you correctly distinguish from uncontrolled inputs (like pure HTML forms) ✓
+
+You've captured all the essential concepts: state-controlled values, required props, real-time behavior, and the difference from uncontrolled inputs. Minor typos ("Reacts" → "React", "doens't" → "doesn't") but your technical understanding is solid! This is exactly what controlled inputs are about - giving React complete control over input values through state. 🎯
+
+---
+
 ### Answer 16 - Controlled input flow
 **Your Answer**: This is a flow used for a Form. The use types on a input, onChanges fire it identifing every type. setState receive the value and react re-render the Component.
 
@@ -184,7 +198,6 @@ No incorrect or incomplete answers remaining! 🎉
 ## 📝 Missing Answers
 
 You didn't answer these questions:
-- **Question 15**: What is a controlled input?
 - **Question 17**: What is component composition?
 - **Question 19**: What does "lifting state up" mean?
 - **Question 20**: What problem does `useMemo` solve?
@@ -196,10 +209,10 @@ You didn't answer these questions:
 
 ## 📊 Summary
 
-- **Strong answers**: 18/25 ✅
+- **Strong answers**: 19/25 ✅
 - **Need improvement**: 0/25 ⚠️
 - **Incorrect/incomplete**: 0/25 ❌
-- **Missing**: 7/25 📝
+- **Missing**: 6/25 📝
 
 **Overall**: Outstanding progress! You now have a strong understanding of React fundamentals, including:
 - ✅ Component re-render triggers (all 4 scenarios)
