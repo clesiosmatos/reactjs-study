@@ -3338,6 +3338,567 @@ This is one of the biggest architectural ideas in React.
 
 Large applications are basically trees of components communicating through props and state.
 
+---
+
+## Deep Dive: Understanding Component Composition
+
+### What is Component Composition?
+
+**Component composition** is the practice of building complex user interfaces by **combining smaller, simpler components together**.
+
+Instead of creating one large monolithic component, you create many small, focused components and compose (combine) them to build your application.
+
+**Mental model:** Think of components like LEGO blocks:
+- Each block (component) is simple and has one purpose
+- You combine blocks together to build complex structures
+- The same blocks can be reused in different ways
+- Changing one block doesn't break the entire structure
+
+### Why Component Composition?
+
+#### Problem: Monolithic Components (Bad Pattern)
+
+```jsx
+// ❌ Bad: One giant component doing everything
+function App() {
+  const [userName, setUserName] = useState('')
+  const [userAge, setUserAge] = useState('')
+  const [posts, setPosts] = useState([])
+  const [comments, setComments] = useState([])
+  const [theme, setTheme] = useState('light')
+  
+  return (
+    <div>
+      {/* Header */}
+      <header style={{ background: theme === 'light' ? 'white' : 'black' }}>
+        <h1>My App</h1>
+        <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+          Toggle Theme
+        </button>
+      </header>
+      
+      {/* User Profile */}
+      <div style={{ border: '1px solid gray', padding: '20px' }}>
+        <h2>User Profile</h2>
+        <input 
+          value={userName} 
+          onChange={(e) => setUserName(e.target.value)} 
+          placeholder="Name"
+        />
+        <input 
+          value={userAge} 
+          onChange={(e) => setUserAge(e.target.value)} 
+          placeholder="Age"
+        />
+        <p>Name: {userName}</p>
+        <p>Age: {userAge}</p>
+      </div>
+      
+      {/* Posts Section */}
+      <div>
+        <h2>Posts</h2>
+        {posts.map(post => (
+          <div key={post.id} style={{ border: '1px solid blue', margin: '10px' }}>
+            <h3>{post.title}</h3>
+            <p>{post.content}</p>
+            <button>Like</button>
+            <button>Share</button>
+          </div>
+        ))}
+      </div>
+      
+      {/* Comments Section */}
+      <div>
+        <h2>Comments</h2>
+        {comments.map(comment => (
+          <div key={comment.id}>
+            <strong>{comment.author}</strong>: {comment.text}
+          </div>
+        ))}
+      </div>
+      
+      {/* Footer */}
+      <footer style={{ background: theme === 'light' ? 'white' : 'black' }}>
+        <p>© 2026 My App</p>
+      </footer>
+    </div>
+  )
+}
+```
+
+**Problems with this approach:**
+- 🔴 Hard to read and maintain (200+ lines in one file)
+- 🔴 Can't reuse any part of this UI elsewhere
+- 🔴 Everything re-renders when anything changes
+- 🔴 Testing is difficult (can't test parts in isolation)
+- 🔴 Multiple developers can't work on different sections easily
+- 🔴 Hard to debug (everything is tangled together)
+
+#### Solution: Component Composition (Good Pattern)
+
+```jsx
+// ✅ Good: Split into small, focused components
+
+// Header.jsx
+function Header({ theme, onThemeToggle }) {
+  return (
+    <header style={{ background: theme === 'light' ? 'white' : 'black' }}>
+      <h1>My App</h1>
+      <button onClick={onThemeToggle}>Toggle Theme</button>
+    </header>
+  )
+}
+
+// UserProfile.jsx
+function UserProfile({ name, age, onNameChange, onAgeChange }) {
+  return (
+    <div style={{ border: '1px solid gray', padding: '20px' }}>
+      <h2>User Profile</h2>
+      <input value={name} onChange={onNameChange} placeholder="Name" />
+      <input value={age} onChange={onAgeChange} placeholder="Age" />
+      <p>Name: {name}</p>
+      <p>Age: {age}</p>
+    </div>
+  )
+}
+
+// Post.jsx
+function Post({ title, content }) {
+  return (
+    <div style={{ border: '1px solid blue', margin: '10px' }}>
+      <h3>{title}</h3>
+      <p>{content}</p>
+      <button>Like</button>
+      <button>Share</button>
+    </div>
+  )
+}
+
+// PostsList.jsx
+function PostsList({ posts }) {
+  return (
+    <div>
+      <h2>Posts</h2>
+      {posts.map(post => (
+        <Post key={post.id} title={post.title} content={post.content} />
+      ))}
+    </div>
+  )
+}
+
+// Comment.jsx
+function Comment({ author, text }) {
+  return (
+    <div>
+      <strong>{author}</strong>: {text}
+    </div>
+  )
+}
+
+// CommentsList.jsx
+function CommentsList({ comments }) {
+  return (
+    <div>
+      <h2>Comments</h2>
+      {comments.map(comment => (
+        <Comment key={comment.id} author={comment.author} text={comment.text} />
+      ))}
+    </div>
+  )
+}
+
+// Footer.jsx
+function Footer({ theme }) {
+  return (
+    <footer style={{ background: theme === 'light' ? 'white' : 'black' }}>
+      <p>© 2026 My App</p>
+    </footer>
+  )
+}
+
+// App.jsx - COMPOSED from smaller components
+function App() {
+  const [userName, setUserName] = useState('')
+  const [userAge, setUserAge] = useState('')
+  const [posts, setPosts] = useState([])
+  const [comments, setComments] = useState([])
+  const [theme, setTheme] = useState('light')
+  
+  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light')
+  
+  return (
+    <div>
+      <Header theme={theme} onThemeToggle={toggleTheme} />
+      
+      <UserProfile 
+        name={userName}
+        age={userAge}
+        onNameChange={(e) => setUserName(e.target.value)}
+        onAgeChange={(e) => setUserAge(e.target.value)}
+      />
+      
+      <PostsList posts={posts} />
+      
+      <CommentsList comments={comments} />
+      
+      <Footer theme={theme} />
+    </div>
+  )
+}
+```
+
+**Benefits of composition:**
+- ✅ Each component is small and focused (one responsibility)
+- ✅ Easy to reuse (`Post` can be used anywhere)
+- ✅ Easy to test (test `Post` independently)
+- ✅ Easy to maintain (find bugs in specific components)
+- ✅ Multiple developers can work on different components
+- ✅ Better performance (only changed components re-render)
+- ✅ Clear component hierarchy and data flow
+
+### The Three Core Composition Patterns
+
+#### Pattern 1: Props Composition
+
+**Passing data down through props to build up functionality.**
+
+```jsx
+// Building blocks
+function Avatar({ src, alt, size }) {
+  return <img src={src} alt={alt} width={size} height={size} />
+}
+
+function UserName({ name, isOnline }) {
+  return (
+    <span>
+      {name}
+      {isOnline && <span style={{ color: 'green' }}> ● Online</span>}
+    </span>
+  )
+}
+
+// Composed component
+function UserCard({ user }) {
+  return (
+    <div className="user-card">
+      <Avatar 
+        src={user.avatarUrl} 
+        alt={user.name}
+        size={50}
+      />
+      <UserName 
+        name={user.name}
+        isOnline={user.isOnline}
+      />
+    </div>
+  )
+}
+
+// Usage - composing UserCard from Avatar + UserName
+function App() {
+  const user = {
+    name: 'Clesio',
+    avatarUrl: '/avatar.jpg',
+    isOnline: true
+  }
+  
+  return <UserCard user={user} />
+}
+```
+
+**Key insight:** `UserCard` is **composed** from `Avatar` and `UserName`. Each piece can be used independently or together.
+
+#### Pattern 2: Children Composition (Slot Pattern)
+
+**Accepting content through the `children` prop.**
+
+```jsx
+// Generic container components
+function Card({ children }) {
+  return (
+    <div className="card" style={{ border: '1px solid gray', padding: '20px' }}>
+      {children}
+    </div>
+  )
+}
+
+function Button({ children, onClick }) {
+  return (
+    <button onClick={onClick} style={{ padding: '10px 20px' }}>
+      {children}
+    </button>
+  )
+}
+
+// Composing by wrapping content
+function ProductCard({ product }) {
+  return (
+    <Card>
+      <h3>{product.name}</h3>
+      <p>{product.description}</p>
+      <p>${product.price}</p>
+      <Button onClick={() => alert('Added to cart!')}>
+        Add to Cart
+      </Button>
+    </Card>
+  )
+}
+```
+
+**Key insight:** `Card` and `Button` don't know what content they'll receive. They're **generic containers** that wrap whatever children you provide.
+
+#### Pattern 3: Render Props / Component Composition
+
+**Passing components as props for flexible composition.**
+
+```jsx
+// Layout component accepting multiple component slots
+function Dashboard({ header, sidebar, content, footer }) {
+  return (
+    <div className="dashboard">
+      <div className="header">{header}</div>
+      <div className="main">
+        <div className="sidebar">{sidebar}</div>
+        <div className="content">{content}</div>
+      </div>
+      <div className="footer">{footer}</div>
+    </div>
+  )
+}
+
+// Usage - passing different components to each slot
+function App() {
+  return (
+    <Dashboard
+      header={<h1>My Dashboard</h1>}
+      sidebar={
+        <nav>
+          <a href="/home">Home</a>
+          <a href="/settings">Settings</a>
+        </nav>
+      }
+      content={
+        <div>
+          <h2>Welcome!</h2>
+          <p>Your dashboard content here</p>
+        </div>
+      }
+      footer={<p>© 2026 My App</p>}
+    />
+  )
+}
+```
+
+**Key insight:** Instead of just `children`, you can accept multiple different component "slots" through props.
+
+### Real-World Example: Building a Modal
+
+Let's see composition in action by building a reusable modal:
+
+```jsx
+// 1. Basic building blocks
+function Overlay({ onClick }) {
+  return (
+    <div 
+      onClick={onClick}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0,0,0,0.5)'
+      }}
+    />
+  )
+}
+
+function ModalContainer({ children }) {
+  return (
+    <div style={{
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      background: 'white',
+      padding: '20px',
+      borderRadius: '8px'
+    }}>
+      {children}
+    </div>
+  )
+}
+
+function CloseButton({ onClick }) {
+  return (
+    <button 
+      onClick={onClick}
+      style={{ position: 'absolute', top: '10px', right: '10px' }}
+    >
+      ✕
+    </button>
+  )
+}
+
+// 2. Compose them into a Modal component
+function Modal({ isOpen, onClose, children }) {
+  if (!isOpen) return null
+  
+  return (
+    <>
+      <Overlay onClick={onClose} />
+      <ModalContainer>
+        <CloseButton onClick={onClose} />
+        {children}
+      </ModalContainer>
+    </>
+  )
+}
+
+// 3. Use the composed Modal
+function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  return (
+    <div>
+      <button onClick={() => setIsModalOpen(true)}>
+        Open Modal
+      </button>
+      
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <h2>Welcome!</h2>
+        <p>This modal is composed from smaller components:</p>
+        <ul>
+          <li>Overlay</li>
+          <li>ModalContainer</li>
+          <li>CloseButton</li>
+        </ul>
+      </Modal>
+    </div>
+  )
+}
+```
+
+**What happened:**
+1. Created small, focused components (`Overlay`, `ModalContainer`, `CloseButton`)
+2. **Composed** them into a `Modal` component
+3. `Modal` can accept any content through `children`
+4. Each piece can be tested, styled, or modified independently
+
+### Composition vs Inheritance
+
+**React strongly favors composition over inheritance.**
+
+**❌ Don't do this (inheritance - Java/C++ style):**
+
+```jsx
+// Anti-pattern: Component inheritance
+class BaseButton extends React.Component {
+  render() {
+    return <button>{this.props.children}</button>
+  }
+}
+
+class PrimaryButton extends BaseButton {
+  render() {
+    return (
+      <button className="primary">
+        {this.props.children}
+      </button>
+    )
+  }
+}
+```
+
+**✅ Do this instead (composition):**
+
+```jsx
+// Good pattern: Component composition
+function Button({ variant, children }) {
+  const className = variant === 'primary' ? 'primary' : 'default'
+  
+  return (
+    <button className={className}>
+      {children}
+    </button>
+  )
+}
+
+// Usage
+<Button variant="primary">Click Me</Button>
+<Button variant="default">Cancel</Button>
+```
+
+**Why composition over inheritance:**
+- More flexible (can combine behaviors easily)
+- Easier to test
+- Clearer code (no hidden parent class logic)
+- Better aligns with React's functional approach
+
+### Composition Checklist
+
+**When building components, ask:**
+
+✅ **Is this component doing one thing well?**
+- If not → split it into smaller components
+
+✅ **Can this component be reused elsewhere?**
+- If yes → it's a good candidate for composition
+
+✅ **Is this component flexible?**
+- Accept `children` or configurable props
+
+✅ **Can this component be tested independently?**
+- If no → it's probably too coupled
+
+### Benefits Summary
+
+**Component Composition gives you:**
+
+1. **Reusability** - Write once, use everywhere
+2. **Maintainability** - Easy to find and fix bugs
+3. **Testability** - Test small pieces in isolation
+4. **Scalability** - Add features without breaking existing code
+5. **Collaboration** - Multiple developers work on different components
+6. **Performance** - Only changed components re-render
+7. **Readability** - Clear component hierarchy
+
+### Mental Model: Building with Blocks
+
+```txt
+App (composed of ↓)
+├── Header (composed of ↓)
+│   ├── Logo
+│   └── Navigation (composed of ↓)
+│       └── NavLink (reused 5 times)
+├── MainContent (composed of ↓)
+│   ├── Sidebar
+│   └── ArticleList (composed of ↓)
+│       └── Article (reused 10 times, composed of ↓)
+│           ├── ArticleTitle
+│           ├── ArticleBody
+│           └── ArticleFooter (composed of ↓)
+│               ├── LikeButton
+│               └── ShareButton
+└── Footer
+```
+
+**Key insight:** Complex UIs are just **trees of simple components** composed together.
+
+### Practical Exercise Pattern
+
+**Start monolithic, then refactor to composition:**
+
+1. **Build it working first** (in one component)
+2. **Identify repeating patterns** (e.g., same UI structure multiple times)
+3. **Extract into components** (one responsibility per component)
+4. **Connect through props** (data flows down)
+5. **Test reusability** (can you use it elsewhere?)
+
+This is how professional React developers build applications!
+
+---
+
 # Step 17 — `children` Props
 
 One of the most powerful React patterns is `children`.
