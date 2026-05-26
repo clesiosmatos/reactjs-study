@@ -125,6 +125,19 @@ You've captured the essence: composition is about combining smaller, focused com
 
 ---
 
+### Answer 19 - What does "lifting state up" mean?
+**Your Answer**: "lifting state up" means that when two child components needs the same state, this state sould be lifted UP to parent. The initial flow, parent send data to child via props "lifiting state up" - if a child have a state and another child needs too, lift it UP to parent.
+
+**Feedback**: ✅ Excellent improvement! You now correctly understand "lifting state up":
+- **Core concept** - "when two child components need the same state" ✓
+- **Direction** - "lifted UP to parent" - you correctly identify the upward movement ✓
+- **Distinction** - you distinguish between normal data flow (parent → child via props) and lifting state up ✓
+- **Scenario** - "if a child have a state and another child needs too" - perfect explanation of when to lift state ✓
+
+You've nailed the key insight: when siblings need to share state, you move it UP to their common parent, then the parent passes it DOWN to both children via props. This is exactly what "lifting state up" means - the state moves up the component tree! Minor typos ("sould" → "should", "lifiting" → "lifting") but your technical understanding is now spot-on! 🎉
+
+---
+
 ### Answer 10 - What is useEffect commonly used for?
 **Your Answer**: useEffect is used to react to efects of the application. When we define a useEffect, every time that the component load it is loaded on the mount and unmount process if it definied a return. We can use this Hook to be trigered by external factors like a change value of a variable when we pass [variable] inside of brackets. The useEffect is used mainly to API calls, start and end timers, open and close websckets connections and etc.
 
@@ -211,7 +224,6 @@ No incorrect or incomplete answers remaining! 🎉
 ## 📝 Missing Answers
 
 You didn't answer these questions:
-- **Question 19**: What does "lifting state up" mean?
 - **Question 20**: What problem does `useMemo` solve?
 - **Question 21**: When should you avoid using `useMemo`?
 - **Question 22**: What happens when a parent component re-renders?
@@ -221,10 +233,10 @@ You didn't answer these questions:
 
 ## 📊 Summary
 
-- **Strong answers**: 20/25 ✅
+- **Strong answers**: 21/25 ✅
 - **Need improvement**: 0/25 ⚠️
 - **Incorrect/incomplete**: 0/25 ❌
-- **Missing**: 5/25 📝
+- **Missing**: 4/25 📝
 
 **Overall**: Outstanding progress! You now have a strong understanding of React fundamentals, including:
 - ✅ Component re-render triggers (all 4 scenarios)
