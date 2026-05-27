@@ -209,6 +209,37 @@ This is a comprehensive, accurate answer that shows deep understanding of React'
 
 ---
 
+### Answer 20 - What problem does `useMemo` solve?
+**Your Answer**: useMemo can be used to avoid expensive processes that don't need to be processed every moment the Component re-render. Examples of expansive processes: large lists of data, expensive calculation, big string processing and etc.
+
+Every moment that one state changes on a Component, it re-render. useMemo give us a solution to avoid re-processing for all function processings.
+
+**Feedback**: ✅ Excellent understanding of `useMemo`'s core purpose! You correctly identify:
+- **Main problem** - avoiding expensive recalculations on every re-render ✓
+- **Great examples** - large lists, expensive calculations, big string processing ✓
+- **The trigger** - state changes cause re-renders ✓
+- **The solution** - useMemo memoizes (caches) the result to avoid re-processing ✓
+
+You've captured the key concept: `useMemo` caches expensive computation results and only recalculates when dependencies change, preventing unnecessary work on every render. Minor typo ("expansive" → "expensive"), but your technical understanding is solid! This shows you understand React's performance optimization strategies. 🎯
+
+---
+
+### Answer 21 - When should you avoid using `useMemo`?
+**Your Answer**: We should avoid use useMemo if the operation or process is cheap, not expensive. Because useMemo has a memory and processing cost.
+For example we don't need to use with simple processing a variable attribution, small lists with < 100 registres.
+
+A good approach is: start always without useMemo, and if you identify after a possible heavy process or operation that is loading every time, add useMemo on this to avoid the unecessary processing.
+
+**Feedback**: ✅ Outstanding answer! You demonstrate mature understanding of performance optimization:
+- **Don't use for cheap operations** - useMemo adds overhead that can be worse than the operation itself ✓
+- **Cost awareness** - "useMemo has a memory and processing cost" - excellent insight! ✓
+- **Good examples** - simple operations, variable attribution, small lists (<100 items) ✓
+- **Best practice** - "start always without useMemo" then add when needed - this is the **gold standard** approach! ✓
+
+This is exactly how professional React developers think about optimization: measure first, optimize second. The "start without it" philosophy prevents premature optimization, which is a common mistake. You understand that `useMemo` isn't free - it has overhead (memory to store cached value, comparison logic). Minor typos ("registres" → "records", "unecessary" → "unnecessary") but your approach is professional-grade! 🎉
+
+---
+
 ## ⚠️ Need Improvement
 
 No answers need improvement! 🎉
@@ -224,8 +255,6 @@ No incorrect or incomplete answers remaining! 🎉
 ## 📝 Missing Answers
 
 You didn't answer these questions:
-- **Question 20**: What problem does `useMemo` solve?
-- **Question 21**: When should you avoid using `useMemo`?
 - **Question 22**: What happens when a parent component re-renders?
 - **Question 23**: Why is React considered declarative?
 
@@ -233,18 +262,19 @@ You didn't answer these questions:
 
 ## 📊 Summary
 
-- **Strong answers**: 21/25 ✅
+- **Strong answers**: 23/25 ✅
 - **Need improvement**: 0/25 ⚠️
 - **Incorrect/incomplete**: 0/25 ❌
-- **Missing**: 4/25 📝
+- **Missing**: 2/25 📝
 
 **Overall**: Outstanding progress! You now have a strong understanding of React fundamentals, including:
 - ✅ Component re-render triggers (all 4 scenarios)
 - ✅ State placement principles (local, lifted, context)
 - ✅ Props vs state
-- ✅ Hooks (useState, useEffect)
+- ✅ Hooks (useState, useEffect, useMemo)
 - ✅ JSX and component basics
+- ✅ Performance optimization (useMemo usage and when to avoid it)
 
-**Next step**: Complete the 7 remaining questions listed above to master React fundamentals! 🚀
+**Next step**: Complete the 2 remaining questions listed above to master React fundamentals! 🚀
 
 You're doing fantastic work - keep going! 💪

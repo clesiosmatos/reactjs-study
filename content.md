@@ -4858,12 +4858,161 @@ Do NOT overuse `useMemo`.
 
 `useMemo` itself has a cost.
 
+## Why Does `useMemo` Have a Cost?
+
+### 1. Memory Cost
+
+React must store the cached value somewhere.
+
+```jsx
+const result = useMemo(() => expensiveCalc(), [dep])
+```
+
+React keeps:
+* The computed value in memory
+* The previous dependencies
+* Internal bookkeeping data
+
+For small values, this is negligible.
+For large arrays or objects, this can add up.
+
+### 2. Comparison Cost
+
+On **every render**, React compares dependencies:
+
+```jsx
+const filtered = useMemo(() => {
+  return data.filter(item => item.active)
+}, [data]) // React compares 'data' on EVERY render
+```
+
+The comparison process:
+1. Loop through dependency array
+2. Compare each value using `Object.is()`
+3. Decide whether to use cached value or recalculate
+
+For simple primitives (numbers, strings), this is fast.
+For arrays or objects, this comparison still happens.
+
+### 3. Function Creation Cost
+
+The callback function is created on every render:
+
+```jsx
+// This function is created every time the component renders
+const result = useMemo(() => {
+  return heavyCalculation()
+}, [dep])
+```
+
+JavaScript must:
+* Allocate memory for the function
+* Create the closure
+* Pass it to React
+
+### 4. Code Complexity Cost
+
+`useMemo` makes code harder to:
+* Read
+* Understand
+* Debug
+* Test
+* Maintain
+
+Compare:
+
+```jsx
+// Simple and clear
+const doubled = count * 2
+
+// More complex
+const doubled = useMemo(() => count * 2, [count])
+```
+
+The second version is objectively more complex for a trivial operation.
+
+---
+
+## When to Use `useMemo`
+
 Use it when:
 
-* the calculation is expensive
-* the list is large
-* re-renders are frequent
-* profiling shows bottlenecks
+* **The calculation is expensive** (loops through thousands of items, complex math, heavy string operations)
+* **The list is large** (filtering/sorting/mapping 1000+ items)
+* **Re-renders are frequent** (parent component re-renders often)
+* **Profiling shows bottlenecks** (use React DevTools Profiler first)
+
+Do NOT use it when:
+
+* The calculation is simple (math operations, simple logic)
+* The data is small (< 100 items)
+* Re-renders are rare
+* You haven't measured the performance
+
+---
+
+## Real-World Guidelines
+
+```jsx
+// ❌ BAD - useMemo is more expensive than the calculation
+const doubled = useMemo(() => count * 2, [count])
+
+// ✅ GOOD - Just calculate it directly
+const doubled = count * 2
+```
+
+```jsx
+// ❌ BAD - Small array, simple filter
+const activeUsers = useMemo(
+  () => [user1, user2, user3].filter(u => u.active),
+  [user1, user2, user3]
+)
+
+// ✅ GOOD - Let it recalculate, it's fast enough
+const activeUsers = [user1, user2, user3].filter(u => u.active)
+```
+
+```jsx
+// ✅ GOOD - Large dataset, expensive operation
+const filteredProducts = useMemo(
+  () => products.filter(p => 
+    p.name.toLowerCase().includes(search.toLowerCase()) &&
+    p.price >= minPrice &&
+    p.price <= maxPrice &&
+    p.category === selectedCategory
+  ),
+  [products, search, minPrice, maxPrice, selectedCategory]
+)
+```
+
+---
+
+## The Trade-Off
+
+Every `useMemo` is a **trade-off**:
+
+**You pay:** Memory + Comparison cost + Complexity
+
+**You save:** Expensive recalculation
+
+The question is: **Is what you save worth what you pay?**
+
+For simple operations: **NO**
+For expensive operations on large data: **YES**
+
+---
+
+## How to Decide
+
+1. Write code without `useMemo` first
+2. Use React DevTools Profiler to measure
+3. Identify actual bottlenecks
+4. Add `useMemo` only where it helps
+5. Measure again to confirm improvement
+
+**Premature optimization is the root of all evil.**
+
+Don't optimize until you have a proven performance problem.
 
 Experienced React developers use memoization strategically, not everywhere.
 
