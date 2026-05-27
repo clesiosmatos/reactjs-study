@@ -240,6 +240,31 @@ This is exactly how professional React developers think about optimization: meas
 
 ---
 
+### Answer 22 - What happens when a parent component re-renders?
+**Your Answer**: A re-render is a flow, 
+1 - React identify a state change
+2 - React creates a new virtual DOM object
+3 - React compares the new virtual DOM object with the old one using a comparision algorithm.
+4 - React update the old DOM with only the parts that changed. 
+And when a parent component re-renders all child component re-renders too.
+
+**Feedback**: ✅ Excellent and comprehensive answer! You've covered both parts of the question:
+
+**The re-render flow:**
+- ✅ State change triggers the process
+- ✅ Virtual DOM creation - React builds a new JavaScript object representation
+- ✅ Reconciliation - comparison algorithm (diffing) identifies what changed
+- ✅ Selective DOM updates - only modified parts are updated in real DOM
+
+**Parent-child relationship:**
+- ✅ "when a parent component re-renders all child component re-renders too" - exactly right!
+
+You've shown deep understanding by explaining the *entire rendering mechanism* (Virtual DOM + reconciliation) along with answering the specific question about parent-child behavior. This demonstrates you understand not just *what* happens, but *how* React achieves it. 
+
+Minor typo: "comparision" → "comparison". Advanced note: This default behavior (children always re-render with parent) can be optimized using `React.memo()` or `useMemo`, but that's beyond the basic question - your answer is spot-on! 🎯
+
+---
+
 ## ⚠️ Need Improvement
 
 No answers need improvement! 🎉
@@ -255,17 +280,16 @@ No incorrect or incomplete answers remaining! 🎉
 ## 📝 Missing Answers
 
 You didn't answer these questions:
-- **Question 22**: What happens when a parent component re-renders?
 - **Question 23**: Why is React considered declarative?
 
 ---
 
 ## 📊 Summary
 
-- **Strong answers**: 23/25 ✅
+- **Strong answers**: 24/25 ✅
 - **Need improvement**: 0/25 ⚠️
 - **Incorrect/incomplete**: 0/25 ❌
-- **Missing**: 2/25 📝
+- **Missing**: 1/25 📝
 
 **Overall**: Outstanding progress! You now have a strong understanding of React fundamentals, including:
 - ✅ Component re-render triggers (all 4 scenarios)
@@ -274,7 +298,8 @@ You didn't answer these questions:
 - ✅ Hooks (useState, useEffect, useMemo)
 - ✅ JSX and component basics
 - ✅ Performance optimization (useMemo usage and when to avoid it)
+- ✅ React's rendering mechanism (Virtual DOM + reconciliation)
 
-**Next step**: Complete the 2 remaining questions listed above to master React fundamentals! 🚀
+**Next step**: Complete the 1 remaining question listed above to master React fundamentals! 🚀
 
 You're doing fantastic work - keep going! 💪
